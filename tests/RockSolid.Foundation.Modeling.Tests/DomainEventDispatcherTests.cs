@@ -115,5 +115,17 @@ public class DomainEventDispatcherTests
 
     }
 
+    [Fact]
+    public async Task DispatchAsync_DispatchNull_Throws()
+    {
+        var handler = new MultiHandler();
+        var serviceCollection = new ServiceCollection();
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+
+        var domainEventDispatcher = new DomainEventDispatcher(serviceProvider);
+
+        await Assert.ThrowsAsync<ArgumentNullException>(async () => await domainEventDispatcher.DispatchAsync(null!, cancellationToken));
+
+    }
 
 }

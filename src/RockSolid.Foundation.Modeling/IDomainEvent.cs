@@ -6,6 +6,7 @@ public interface IDomainEvent
 }
 
 public interface IDomainEvent<TSelf> : IDomainEvent, IEquatable<TSelf>
+    where TSelf : IDomainEvent<TSelf>
 {
 
 }

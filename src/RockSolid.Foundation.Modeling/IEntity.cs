@@ -8,6 +8,7 @@ public interface IEntity
 }
 
 public interface IEntity<TSelf, TId> : IEntity, IEquatable<IEntity<TSelf, TId>>
+    where TSelf : IEntity<TSelf, TId>
     where TId : notnull
 {
     public TId Id { get; }

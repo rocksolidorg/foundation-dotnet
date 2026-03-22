@@ -11,6 +11,11 @@ public class EntityTests
         {
             RaiseDomainEvent(new TestDomainEvent { });
         }
+
+        public void TestNull()
+        {
+            RaiseDomainEvent(null!);
+        }
     }
     internal sealed class Test1Entity(int id) : Entity<TestEntity, int>(id);
     internal sealed class Test2Entity(int id) : Entity<TestEntity, int>(id);
@@ -43,7 +48,7 @@ public class EntityTests
     public void CompareEntity_SameIdDifferentType_AreNotEqual()
     {
         var first = new Test1Entity(1);
-        var second = new Test2Entity(2);
+        var second = new Test2Entity(1);
 
         bool notEqual = !first.Equals(second) && first != second;
 
@@ -59,6 +64,14 @@ public class EntityTests
         entity.Test();
 
         Assert.Single(entity.DomainEvents);
+    }
+
+    [Fact]
+    public void RaiseDomainEvent_WithNull_ShouldThrow()
+    {
+        var entity = new TestEntity(1);
+
+        Assert.Throws<ArgumentNullException>(() => entity.TestNull());
     }
 
     [Fact]

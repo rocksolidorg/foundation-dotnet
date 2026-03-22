@@ -39,7 +39,8 @@ public sealed class DomainEventDispatcher(IServiceProvider serviceProvider) : ID
             foreach (var handler in handlers)
             {
 
-                await delegateMethod(handler, domainEvent, cancellationToken);
+                await delegateMethod(handler, domainEvent, cancellationToken)
+                    .ConfigureAwait(false);
                 // try
                 // {
                 //     var task = handlerMethod.Invoke(handler, [domainEvent, cancellationToken]) as Task;
@@ -58,7 +59,6 @@ public sealed class DomainEventDispatcher(IServiceProvider serviceProvider) : ID
     private static DomainEventHandlerDelegate CreateHandlerDelegate(MethodInfo methodInfo, Type eventType)
     {
         // Parameters: (object handler, object domainEvent, CancellationToken cancellationToken)
-        var objectParam = Expression.Parameter(typeof(object));
         var handlerParam = Expression.Parameter(typeof(object));
         var eventParam = Expression.Parameter(typeof(object));
         var tokenParam = Expression.Parameter(typeof(CancellationToken));

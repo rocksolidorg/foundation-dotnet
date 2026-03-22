@@ -1,20 +1,20 @@
 {
-  "version": 1,
-  "isRoot": true,
-  "tools": {
-    "nbgv": {
-      "version": "3.9.50",
-      "commands": [
-        "nbgv"
-      ],
-      "rollForward": false
-    },
-    "dotnet-reportgenerator-globaltool": {
-      "version": "5.5.4",
-      "commands": [
-        "reportgenerator"
-      ],
-      "rollForward": false
+    "version": 1,
+    "isRoot": true,
+    "tools": {
+        "nbgv": {
+            "version": "3.9.50",
+            "commands": [
+                "nbgv"
+            ],
+            "rollForward": false
+        },
+        "dotnet-reportgenerator-globaltool": {
+            "version": "5.5.4",
+            "commands": [
+                "reportgenerator"
+            ],
+            "rollForward": false
+        }
     }
-  }
 }
