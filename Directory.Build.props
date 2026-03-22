@@ -1,0 +1,35 @@
+<Project>
+    <PropertyGroup>
+        <Authors>John Susi</Authors>
+        <Copyright>Copyright (c) John Susi 2026</Copyright>
+        <Description>A lightweight .NET library that provides foundational building blocks for
+            Tactical Domain-Driven Design</Description>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <PackageProjectUrl>rocksolidorg/foundation-dotnet</PackageProjectUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>DDD</PackageTags>
+        <EnablePackageValidation>true</EnablePackageValidation>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <DebugType>embedded</DebugType>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    </PropertyGroup>
+
+
+    <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Nerdbank.GitVersioning" Condition="!Exists('packages.config')"
+            PrivateAssets="all" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="$(MSBuildThisFileDirectory)/LICENSE" Pack="true" PackagePath="" />
+        <None Include="$(MSBuildThisFileDirectory)/README.md" Pack="true" PackagePath="" />
+    </ItemGroup>
+
+</Project>
