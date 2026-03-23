@@ -4,7 +4,10 @@ public class AggregateRoot<TSelf, TId> : Entity<TSelf, TId>, IAggregateRoot<TSel
     where TSelf : AggregateRoot<TSelf, TId>
     where TId : notnull
 {
-    public DateTimeOffset LastModifiedAt { get; protected set; } = DateTimeOffset.MinValue;
+    public DateTimeOffset LastModifiedAt { get; protected set; }
 
-    protected AggregateRoot(TId id) : base(id) { }
+    protected AggregateRoot(TId id, DateTimeOffset lastModifiedAt = default) : base(id)
+    {
+        LastModifiedAt = lastModifiedAt;
+    }
 }

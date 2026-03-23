@@ -17,8 +17,8 @@ public class EntityTests
             RaiseDomainEvent(null!);
         }
     }
-    internal sealed class Test1Entity(int id) : Entity<TestEntity, int>(id);
-    internal sealed class Test2Entity(int id) : Entity<TestEntity, int>(id);
+    internal sealed class Test1Entity(int id) : Entity<Test1Entity, int>(id);
+    internal sealed class Test2Entity(int id) : Entity<Test2Entity, int>(id);
 
     [Fact]
     public void CompareEntity_SameId_AreEqual()
@@ -44,13 +44,24 @@ public class EntityTests
         Assert.True(notEqual);
     }
 
+
+
+    [Fact]
+    public void CompareEntity_WithNull_AreNotEqual()
+    {
+        var first = new TestEntity(1);
+
+        bool notEqual = !first.Equals(null);
+
+        Assert.True(notEqual);
+    }
     [Fact]
     public void CompareEntity_SameIdDifferentType_AreNotEqual()
     {
         var first = new Test1Entity(1);
         var second = new Test2Entity(1);
 
-        bool notEqual = !first.Equals(second) && first != second;
+        bool notEqual = !first.Equals(second);
 
         Assert.True(notEqual);
     }
@@ -84,5 +95,23 @@ public class EntityTests
 
         Assert.Empty(entity.DomainEvents);
     }
+
+    [Fact]
+    public void Transient_WithDefaultId_IsTransient()
+    {
+        var entity = new TestEntity(default);
+
+        Assert.True(entity.Transient);
+    }
+
+    [Fact]
+    public void Transient_WithNonDefaultId_IsNotTransient()
+    {
+        var entity = new TestEntity(1);
+
+        Assert.False(entity.Transient);
+    }
+
+
 
 }
