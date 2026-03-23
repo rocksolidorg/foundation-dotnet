@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace RockSolid.Foundation.Modeling.AspNetCore;

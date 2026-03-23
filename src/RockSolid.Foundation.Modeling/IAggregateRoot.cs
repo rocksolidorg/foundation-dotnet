@@ -7,6 +7,6 @@ public interface IAggregateRoot : IEntity
 
 public interface IAggregateRoot<TSelf, TId> : IAggregateRoot, IEntity<TSelf, TId>
     where TSelf : IAggregateRoot<TSelf, TId>
-    where TId : notnull
+    where TId : notnull, IComparable<TId>, IEquatable<TId>
 {
 }

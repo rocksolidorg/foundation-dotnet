@@ -90,7 +90,7 @@ public class UnitOfWork<TContext> : IUnitOfWork
         private readonly DbSet<TAggregate> _set = db.Set<TAggregate>();
 
         public ValueTask<TAggregate?> GetByIdAsync<TId>(TId id, CancellationToken cancellationToken)
-            where TId : notnull
+            where TId : notnull, IComparable<TId>, IEquatable<TId>
             => _set.FindAsync(id, cancellationToken);
 
         public IAsyncEnumerable<TAggregate> GetBySpecificationAsync(Expression<Func<TAggregate, bool>> specification, CancellationToken cancellationToken)
@@ -114,9 +114,6 @@ public class UnitOfWork<TContext> : IUnitOfWork
         public void Remove(TAggregate aggregate)
             => _set.Remove(aggregate);
 
-
     }
-
-
 }
 

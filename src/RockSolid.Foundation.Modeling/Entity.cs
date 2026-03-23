@@ -4,7 +4,7 @@ namespace RockSolid.Foundation.Modeling;
 
 public abstract class Entity<TSelf, TId>(TId id) : IEntity<TSelf, TId>
     where TSelf : Entity<TSelf, TId>
-    where TId : notnull
+    where TId : notnull, IComparable<TId>, IEquatable<TId>
 {
     private readonly List<IDomainEvent> _domainEvents = [];
     public IReadOnlyList<IDomainEvent> DomainEvents => _domainEvents;
