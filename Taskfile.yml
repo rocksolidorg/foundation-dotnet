@@ -7,5 +7,6 @@ tasks:
         desc: Test project
         cmds:
             - dotnet test -- --coverage --coverage-output-format cobertura --coverage-output coverage.cobertura.xml
-            - dotnet ReportGenerator '-reporttypes:TextSummary;HtmlSummary;MarkdownSummaryGithub' -reports:**/TestResults/coverage.cobertura.xml -targetdir:CoverageReport
+            - dotnet ReportGenerator '-reporttypes:Html;TextSummary;MarkdownSummaryGithub' -reports:**/TestResults/coverage.cobertura.xml -targetdir:CoverageReport
+            - cat CoverageReport/Summary.txt
         silent: true

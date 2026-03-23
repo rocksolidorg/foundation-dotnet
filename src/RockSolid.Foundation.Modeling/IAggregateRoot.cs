@@ -9,5 +9,4 @@ public interface IAggregateRoot<TSelf, TId> : IAggregateRoot, IEntity<TSelf, TId
     where TSelf : IAggregateRoot<TSelf, TId>
     where TId : notnull
 {
-
 }

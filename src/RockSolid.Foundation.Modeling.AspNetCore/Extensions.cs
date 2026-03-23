@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace RockSolid.Foundation.Modeling.AspNetCore;
@@ -7,9 +8,16 @@ public static class Extensions
 {
     extension(IServiceCollection services)
     {
-        public IServiceCollection AddDomainModeling()
+        public IServiceCollection AddDomainEventDispatcher()
         {
             services.TryAddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
+            return services;
+        }
+
+        public IServiceCollection AddUnitOfWork<TContext>()
+            where TContext : DbContext
+        {
+            services.TryAddScoped<IUnitOfWork, UnitOfWork<TContext>>();
             return services;
         }
 

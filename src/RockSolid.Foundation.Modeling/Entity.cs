@@ -6,12 +6,9 @@ public abstract class Entity<TSelf, TId>(TId id) : IEntity<TSelf, TId>
     where TSelf : Entity<TSelf, TId>
     where TId : notnull
 {
-
     private readonly List<IDomainEvent> _domainEvents = [];
     public IReadOnlyList<IDomainEvent> DomainEvents => _domainEvents;
-
     public TId Id { get; protected set; } = id;
-
     public bool Transient => EqualityComparer<TId>.Default.Equals(Id, default);
 
     protected void RaiseDomainEvent(IDomainEvent domainEvent)
@@ -43,5 +40,4 @@ public abstract class Entity<TSelf, TId>(TId id) : IEntity<TSelf, TId>
 
     public static bool operator !=(Entity<TSelf, TId>? left, Entity<TSelf, TId>? right)
         => !Equals(left, right);
-
 }

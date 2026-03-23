@@ -5,7 +5,7 @@
         <Description>A lightweight .NET library that provides foundational building blocks for
             Tactical Domain-Driven Design</Description>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
-        <PackageProjectUrl>rocksolidorg/foundation-dotnet</PackageProjectUrl>
+        <PackageProjectUrl>https://github.com/rocksolidorg/foundation-dotnet</PackageProjectUrl>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>DDD</PackageTags>
         <EnablePackageValidation>true</EnablePackageValidation>
