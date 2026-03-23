@@ -5,9 +5,7 @@
         "^refs/heads/main$",
         "^refs/tags/v\\d+(?:\\.\\d+)+(-(alpha|beta|rc).\\d+)?$"
     ],
-    "cloudBuild": {
-        "buildNumber": {
-            "enabled": true
-        }
+    "nuGetPackageVersion": {
+        "semVer": 2.0
     }
 }
