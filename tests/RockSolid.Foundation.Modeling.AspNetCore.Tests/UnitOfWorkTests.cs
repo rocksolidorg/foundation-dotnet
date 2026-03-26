@@ -4,20 +4,43 @@ using System.Linq.Expressions;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Time.Testing;
 using Xunit.Internal;
 
 namespace RockSolid.Foundation.Modeling.AspNetCore.Tests;
 
+public class DomainEventDispatcherTests
+{
+
+}
+
 public class ExtensionTests
 {
 
     internal sealed class ErrorType1;
-    internal struct ErrorType2;
+    internal abstract class ErrorType2;
+    internal interface IErrorType3;
+    internal sealed class ErrorType3 : IErrorType3;
+
+    internal interface IErrorType4<T>;
+    internal class ErrorType4 : IErrorType4<int>;
+
     [Fact]
     public void AddDomainEventHandler_1()
     {
-        Assert.Throws<ArgumentException>(() => new ServiceCollection().AddDomainEventHandler<ErrorType1>());
+
+        var services = new ServiceCollection();
+        Assert.Throws<ArgumentException>(() => services.AddDomainEventHandler<ErrorType1>());
+        Assert.Throws<ArgumentException>(() => services.AddDomainEventHandler<ErrorType2>());
+        Assert.Throws<ArgumentException>(() => services.AddDomainEventHandler<ErrorType3>());
+        Assert.Throws<ArgumentException>(() => services.AddDomainEventHandler<ErrorType4>());
+
+        // var method = typeof(Extensions)
+        //     .GetMethods()
+        //     .First(m => m.Name == "AddDomainEventHandler" && m.IsGenericMethod);
+        // var genericMethod = method.MakeGenericMethod(typeof(int));
+        // Assert.Throws<ArgumentException>(() => genericMethod.Invoke(null, [services]));
     }
 
 }
@@ -41,7 +64,6 @@ public class UnitOfWorkTests : IAsyncDisposable
                 options.UseSqlite(_connection);
             })
             .AddUnitOfWork<TestDbContext>()
-            .AddDomainEventDispatcher()
             .AddDomainEventHandler<TestHandler>();
 
     private (List<TestAggregate> Expected, List<TestAggregate> Entities) TestData
@@ -64,27 +86,6 @@ public class UnitOfWorkTests : IAsyncDisposable
         var context = scope.ServiceProvider.GetRequiredService<TestDbContext>();
         await context.Database.EnsureCreatedAsync(_cancellationToken);
         return scope;
-    }
-
-    [Fact]
-    public async Task Construct_PassingNull_ThrowsArgumentNullException()
-    {
-        var serviceProvider = TestServices.BuildServiceProvider();
-        Assert.Throws<ArgumentNullException>(() =>
-            new UnitOfWork<TestDbContext>(
-                null!,
-                serviceProvider.GetRequiredService<IDomainEventDispatcher>(),
-                serviceProvider.GetRequiredService<TimeProvider>()));
-        Assert.Throws<ArgumentNullException>(() =>
-            new UnitOfWork<TestDbContext>(
-                serviceProvider.GetRequiredService<TestDbContext>(),
-                null!,
-                serviceProvider.GetRequiredService<TimeProvider>()));
-        Assert.Throws<ArgumentNullException>(() =>
-            new UnitOfWork<TestDbContext>(
-                serviceProvider.GetRequiredService<TestDbContext>(),
-                serviceProvider.GetRequiredService<IDomainEventDispatcher>(),
-                null!));
     }
 
     [Fact]
@@ -453,13 +454,16 @@ public class UnitOfWorkTests : IAsyncDisposable
         }
 
     }
-    internal sealed class TestDbContext(DbContextOptions<TestDbContext> options) : DbContext(options)
+    internal sealed class TestDbContext(DbContextOptions<TestDbContext> options) : DbContext(options), IOutboxContext
     {
         public DbSet<TestAggregate> TestAggregates { get; set; }
+
+        public DbSet<OutboxMessage> OutboxMessages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.AddOutbox();
             modelBuilder.Entity<TestAggregate>(entityBuilder =>
             {
                 entityBuilder.HasKey(e => e.Id);

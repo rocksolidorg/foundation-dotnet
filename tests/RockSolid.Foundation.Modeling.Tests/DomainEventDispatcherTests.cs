@@ -48,11 +48,7 @@ public class DomainEventDispatcherTests
     [Fact]
     public async Task DispatchAsync_MissingServiceProvider_Throws()
     {
-        var serviceCollection = new ServiceCollection();
-        var serviceProvider = serviceCollection.BuildServiceProvider();
-
         Assert.Throws<ArgumentNullException>(() => new DomainEventDispatcher(null!));
-
     }
 
 
