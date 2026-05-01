@@ -3,6 +3,9 @@ namespace RockSolid.Foundation.Modeling;
 public interface IAggregateRoot : IEntity
 {
     DateTimeOffset LastModifiedAt { get; }
+    IReadOnlyList<IDomainEvent> DomainEvents { get; }
+    void ClearDomainEvents();
+
 }
 
 public interface IAggregateRoot<TSelf, TId> : IAggregateRoot, IEntity<TSelf, TId>

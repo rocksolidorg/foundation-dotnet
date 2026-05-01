@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,7 +35,7 @@ public class UnitOfWork<TContext> : IUnitOfWork
             while (true)
             {
                 var domainEvents = _context.ChangeTracker
-                    .Entries<IEntity>()
+                    .Entries<IAggregateRoot>()
                     .SelectMany(e => e.Entity.DomainEvents)
                     .ToList();
                 int dispatched = 0;
@@ -65,7 +66,7 @@ public class UnitOfWork<TContext> : IUnitOfWork
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            foreach (var entry in _context.ChangeTracker.Entries<IEntity>())
+            foreach (var entry in _context.ChangeTracker.Entries<IAggregateRoot>())
             {
                 entry.Entity.ClearDomainEvents();
             }
@@ -89,21 +90,19 @@ public class UnitOfWork<TContext> : IUnitOfWork
     {
         private readonly DbSet<TAggregate> _set = db.Set<TAggregate>();
 
+        public IEnumerator<TAggregate> GetEnumerator() => (_set as IEnumerable<TAggregate>).GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => (_set as IEnumerable).GetEnumerator();
+
+        Type IQueryable.ElementType => (_set as IQueryable).ElementType;
+
+        Expression IQueryable.Expression => (_set as IQueryable).Expression;
+
+        IQueryProvider IQueryable.Provider => (_set as IQueryable).Provider;
+
         public ValueTask<TAggregate?> GetByIdAsync<TId>(TId id, CancellationToken cancellationToken)
             where TId : notnull, IComparable<TId>, IEquatable<TId>
-            => _set.FindAsync(id, cancellationToken);
-
-        public IAsyncEnumerable<TAggregate> GetBySpecificationAsync(Expression<Func<TAggregate, bool>> specification, CancellationToken cancellationToken)
-            => _set
-                .AsNoTracking()
-                .Where(specification)
-                .AsAsyncEnumerable();
-
-        public IAsyncEnumerable<TAggregate> GetBySpecificationForUpdateAsync(Expression<Func<TAggregate, bool>> specification, CancellationToken cancellationToken)
-            => _set
-                .AsTracking()
-                .Where(specification)
-                .AsAsyncEnumerable();
+            => _set.FindAsync([id], cancellationToken);
 
         public void Add(TAggregate aggregate)
             => _set.Add(aggregate);

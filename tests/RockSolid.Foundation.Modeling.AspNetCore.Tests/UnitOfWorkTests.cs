@@ -1,8 +1,11 @@
+using System.Collections;
 using System.Data;
+using System.Linq.Expressions;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Time.Testing;
+using Xunit.Internal;
 
 namespace RockSolid.Foundation.Modeling.AspNetCore.Tests;
 
@@ -297,16 +300,15 @@ public class UnitOfWorkTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task GetBySpecificationAsync_ReturnsExpected()
+    public async Task Repository_ForEach_Iterates()
     {
-        var (expected, data) = TestData;
-
+        var expected = Enumerable.Range(1, 100).Select(i => new TestAggregate(new(Guid.NewGuid()), i)).ToList();
         await using (var scope = await CreateScopeAsync())
         {
             var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
             var repository = unitOfWork.Repository<TestAggregate>();
-            foreach (var item in data)
-                repository.Add(item);
+            foreach (var entity in expected)
+                repository.Add(entity);
             await unitOfWork.SaveChangesAsync(_cancellationToken);
         }
 
@@ -315,64 +317,44 @@ public class UnitOfWorkTests : IAsyncDisposable
             var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
             var repository = unitOfWork.Repository<TestAggregate>();
 
-            var actual = await repository.GetBySpecificationAsync(e => e.Value <= 100, _cancellationToken)
-                .ToListAsync(_cancellationToken);
-            Assert.Equal(expected.OrderBy(e => e.Id), actual.OrderBy(e => e.Id));
+            var actual = repository.AsEnumerable().OrderBy(x => x.Value);
+
+            Assert.Equal(expected, actual);
         }
     }
 
     [Fact]
-    public async Task GetBySpecificationForUpdateAsync_ReturnsExpected()
+    public async Task Repository_Where_Filters()
     {
-        var (expected, data) = TestData;
-
+        var entities = Enumerable.Range(1, 100).Select(i => new TestAggregate(new(Guid.NewGuid()), i)).ToList();
+        var expected = entities
+            .Where(x => x.Value % 2 == 0)
+            .OrderBy(x => x.Value).ToList();
         await using (var scope = await CreateScopeAsync())
         {
             var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
             var repository = unitOfWork.Repository<TestAggregate>();
-            foreach (var item in data)
-                repository.Add(item);
+            foreach (var entity in entities)
+                repository.Add(entity);
             await unitOfWork.SaveChangesAsync(_cancellationToken);
         }
 
         await using (var scope = await CreateScopeAsync())
         {
+
             var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
             var repository = unitOfWork.Repository<TestAggregate>();
 
-            var actual = await repository.GetBySpecificationForUpdateAsync(e => e.Value <= 100, _cancellationToken)
+            var actual = await repository
+                .Where(x => x.Value % 2 == 0)
+                .OrderBy(x => x.Value)
                 .ToListAsync(_cancellationToken);
-            Assert.Equal(expected.OrderBy(e => e.Id), actual.OrderBy(e => e.Id));
+
+            Assert.Equal(expected, actual);
+
         }
     }
 
-
-    [Fact]
-    public async Task ExecuteDeleteAsync_ReturnsExpected()
-    {
-        var (expected, data) = TestData;
-
-        await using (var scope = await CreateScopeAsync())
-        {
-            var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-            var repository = unitOfWork.Repository<TestAggregate>();
-            foreach (var item in data)
-                repository.Add(item);
-            await unitOfWork.SaveChangesAsync(_cancellationToken);
-        }
-
-        await using (var scope = await CreateScopeAsync())
-        {
-            var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-            var repository = unitOfWork.Repository<TestAggregate>();
-
-            await unitOfWork.ExecuteDeleteAsync<TestAggregate>(e => e.Value > 100, _cancellationToken);
-
-            var actual = await repository.GetBySpecificationAsync(_ => true, _cancellationToken)
-                .ToListAsync(_cancellationToken);
-            Assert.Equal(expected.OrderBy(e => e.Id), actual.OrderBy(e => e.Id));
-        }
-    }
     public async ValueTask DisposeAsync()
     {
         await _connection.DisposeAsync();

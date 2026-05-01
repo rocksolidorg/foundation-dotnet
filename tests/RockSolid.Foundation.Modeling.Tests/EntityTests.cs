@@ -7,15 +7,15 @@ public class EntityTests
     internal sealed record TestDomainEvent : IDomainEvent<TestDomainEvent>;
     internal sealed class TestEntity(int id) : Entity<TestEntity, int>(id)
     {
-        public void Test()
-        {
-            RaiseDomainEvent(new TestDomainEvent { });
-        }
+        // public void Test()
+        // {
+        //     RaiseDomainEvent(new TestDomainEvent { });
+        // }
 
-        public void TestNull()
-        {
-            RaiseDomainEvent(null!);
-        }
+        // public void TestNull()
+        // {
+        //     RaiseDomainEvent(null!);
+        // }
     }
     internal sealed class Test1Entity(int id) : Entity<Test1Entity, int>(id);
     internal sealed class Test2Entity(int id) : Entity<Test2Entity, int>(id);
@@ -64,36 +64,6 @@ public class EntityTests
         bool notEqual = !first.Equals(second);
 
         Assert.True(notEqual);
-    }
-
-
-    [Fact]
-    public void RaiseDomainEvent_ShouldAddToList()
-    {
-        var entity = new TestEntity(1);
-
-        entity.Test();
-
-        Assert.Single(entity.DomainEvents);
-    }
-
-    [Fact]
-    public void RaiseDomainEvent_WithNull_ShouldThrow()
-    {
-        var entity = new TestEntity(1);
-
-        Assert.Throws<ArgumentNullException>(() => entity.TestNull());
-    }
-
-    [Fact]
-    public void ClearDomainEvents_ShouldEmptyList()
-    {
-        var entity = new TestEntity(1);
-        entity.Test();
-
-        entity.ClearDomainEvents();
-
-        Assert.Empty(entity.DomainEvents);
     }
 
     [Fact]

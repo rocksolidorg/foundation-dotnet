@@ -6,19 +6,8 @@ public abstract class Entity<TSelf, TId>(TId id) : IEntity<TSelf, TId>
     where TSelf : Entity<TSelf, TId>
     where TId : notnull, IComparable<TId>, IEquatable<TId>
 {
-    private readonly List<IDomainEvent> _domainEvents = [];
-    public IReadOnlyList<IDomainEvent> DomainEvents => _domainEvents;
     public TId Id { get; protected set; } = id;
     public bool Transient => EqualityComparer<TId>.Default.Equals(Id, default);
-
-    protected void RaiseDomainEvent(IDomainEvent domainEvent)
-    {
-        ArgumentNullException.ThrowIfNull(domainEvent);
-        _domainEvents.Add(domainEvent);
-    }
-
-    public void ClearDomainEvents()
-        => _domainEvents.Clear();
 
     public override int GetHashCode()
         => Transient
