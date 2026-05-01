@@ -7,7 +7,7 @@ internal sealed class DomainEventDispatcher(IServiceProvider serviceProvider) : 
 {
     private delegate Task DispatchDelegate(IServiceProvider serviceProvider, IDomainEvent domainEvent, CancellationToken cancellationToken);
     private static readonly ConcurrentDictionary<Type, DispatchDelegate> _cache = [];
-    private readonly IServiceProvider _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(ServiceProvider));
+    private readonly IServiceProvider _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
     public Task DispatchAsync(IDomainEvent domainEvent, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(domainEvent);
