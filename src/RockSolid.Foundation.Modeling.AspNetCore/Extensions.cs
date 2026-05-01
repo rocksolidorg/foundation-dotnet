@@ -6,17 +6,23 @@ namespace RockSolid.Foundation.Modeling.AspNetCore;
 
 public static class Extensions
 {
+
+    extension(ModelBuilder modelBuilder)
+    {
+        public ModelBuilder AddOutbox()
+        {
+            modelBuilder.ApplyConfiguration(new OutboxMessageEntityTypeConfiguration());
+            return modelBuilder;
+        }
+    }
+
     extension(IServiceCollection services)
     {
-        public IServiceCollection AddDomainEventDispatcher()
-        {
-            services.TryAddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
-            return services;
-        }
 
         public IServiceCollection AddUnitOfWork<TContext>()
-            where TContext : DbContext
+            where TContext : DbContext, IOutboxContext
         {
+            services.TryAddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
             services.TryAddScoped<IUnitOfWork, UnitOfWork<TContext>>();
             return services;
         }
@@ -48,8 +54,7 @@ public static class Extensions
         && !type.ContainsGenericParameters;
 
     private static bool IsValidType(Type type, IList<Type> interfaces)
-        => type.IsClass
-        && !type.IsAbstract
+        => !type.IsAbstract
         && !type.IsGenericTypeDefinition
         && interfaces.Count > 0;
 

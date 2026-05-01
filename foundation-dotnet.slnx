@@ -2,6 +2,7 @@
     <Folder Name="/src/">
         <Project Path="src/RockSolid.Foundation.Modeling/RockSolid.Foundation.Modeling.csproj" />
         <Project Path="src/RockSolid.Foundation.Modeling.AspNetCore/RockSolid.Foundation.Modeling.AspNetCore.csproj" />
+        <Project Path="src/RockSolid.Foundation.Modeling.Protoobuf/RockSolid.Foundation.Modeling.Protobuf.csproj" />
         <Project Path="src/RockSolid.Foundation.Uuid/RockSolid.Uuid.csproj" />
     </Folder>
     <Folder Name="/tests/">

@@ -74,18 +74,6 @@ public static class Uuid
     /// <item><description>uses a clock sequence that increments when the clock does not advance,</description></item>
     /// <item><description>and uses either the first available MAC address or a randomly generated multicast node identifier.</description></item>
     /// </list>
-    ///  0                   1                   2                   3
-    ///  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-    /// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    /// |                           time_low                            |
-    /// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    /// |           time_mid            |  ver  |       time_high       |
-    /// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    /// |var|         clock_seq         |             node              |
-    /// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    /// |                              node                             |
-    /// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    /// RFC 9562, Figure 9: UUIDv4 Field and Bit Layout
     /// </remarks>
     public static Guid CreateV1()
         => s_generator.Value.NextV1();

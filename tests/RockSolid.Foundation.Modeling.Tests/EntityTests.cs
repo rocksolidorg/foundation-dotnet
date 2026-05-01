@@ -1,6 +1,23 @@
+using System.Runtime.CompilerServices;
+
 namespace RockSolid.Foundation.Modeling.Tests;
 
-using RockSolid.Foundation.Modeling;
+public class EntityIdTests
+{
+    internal sealed record TestId(int Value) : IEntityId<TestId, int>;
+
+    [Fact]
+    public void CompareTo()
+    {
+        var a = new TestId(1);
+        var b = new TestId(2);
+        Assert.True(((IComparable<TestId>)a).CompareTo(b) < 0);
+        Assert.True(((IComparable<TestId>)b).CompareTo(a) > 0);
+        Assert.True(((IComparable<TestId>)a).CompareTo(a) == 0);
+        Assert.True(((IComparable<TestId>)b).CompareTo(b) == 0);
+        Assert.True(((IComparable<TestId>)a).CompareTo(null) > 0);
+    }
+}
 
 public class EntityTests
 {
@@ -67,7 +84,7 @@ public class EntityTests
     }
 
     [Fact]
-    public void Transient_WithDefaultId_IsTransient()
+    public void Transient_WithDefaultId_ReturnsTrue()
     {
         var entity = new TestEntity(default);
 
@@ -75,13 +92,26 @@ public class EntityTests
     }
 
     [Fact]
-    public void Transient_WithNonDefaultId_IsNotTransient()
+    public void Transient_WithNonDefaultId_ReturnsFalse()
     {
         var entity = new TestEntity(1);
 
         Assert.False(entity.Transient);
     }
 
+    [Fact]
+    public void GetHashCode_WhenTransient_ReturnsInstanceHashCode()
+    {
+        var entity1 = new TestEntity(default);
+        var entity2 = new TestEntity(default);
 
+        Assert.NotEqual(entity1.GetHashCode(), entity2.GetHashCode());
+
+        int hash1 = entity1.GetHashCode();
+        int hash2 = entity1.GetHashCode();
+        Assert.Equal(hash1, hash2);
+
+        Assert.NotEqual(entity1, entity2);
+    }
 
 }

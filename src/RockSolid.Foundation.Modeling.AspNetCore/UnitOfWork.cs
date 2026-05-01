@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace RockSolid.Foundation.Modeling.AspNetCore;
 
-public class UnitOfWork<TContext> : IUnitOfWork
+internal sealed class UnitOfWork<TContext> : IUnitOfWork
     where TContext : DbContext
 {
     private readonly TContext _context;
@@ -14,9 +14,12 @@ public class UnitOfWork<TContext> : IUnitOfWork
     private const int MaxDispatch = 1024;
     public UnitOfWork(TContext context, IDomainEventDispatcher domainEventDispatcher, TimeProvider timeProvider)
     {
-        _context = context ?? throw new ArgumentNullException(nameof(context));
-        _domainEventDispatcher = domainEventDispatcher ?? throw new ArgumentNullException(nameof(domainEventDispatcher));
-        _timeProvider = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
+        ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(domainEventDispatcher);
+        ArgumentNullException.ThrowIfNull(timeProvider);
+        _context = context;
+        _domainEventDispatcher = domainEventDispatcher;
+        _timeProvider = timeProvider;
     }
 
     public IRepository<TAggregate> Repository<TAggregate>()
@@ -115,4 +118,3 @@ public class UnitOfWork<TContext> : IUnitOfWork
 
     }
 }
-
